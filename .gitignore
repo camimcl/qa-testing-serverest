@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+report.html
+assets/
+.idea/
+.kiro/

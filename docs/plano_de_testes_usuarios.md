@@ -1,9 +1,7 @@
 # Plano de Testes — Endpoint de Usuários | ServeRest API
 
-> **API Base URL:** `https://serverest.dev`  
+> **API Base URL:** `https://compassuol.serverest.dev/`  
 > **Endpoint:** `/usuarios`  
-> **Autor:** QA Sênior  
-> **Data:** Junho/2026  
 > **Versão:** 1.0
 
 ---
