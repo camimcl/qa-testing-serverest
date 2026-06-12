@@ -1,6 +1,5 @@
 """
 Funcoes de logging para feedback visual dos testes no terminal.
-Compativel com Windows cp1252 (sem emojis Unicode).
 """
 
 import json

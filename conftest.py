@@ -15,29 +15,33 @@ def api():
     return ServeRestClient(BASE_URL)
 
 
-@pytest.fixture(scope="session")
-def session_user(api):
+@pytest.fixture
+def isolated_user(api):
     """
-    Cria um usuario 'semente' com dados dinamicos no inicio da sessao.
-    Usado pelos testes que precisam de um usuario pre-existente (CT-002, CT-005, CT-009).
-    Removido automaticamente no teardown.
+    Cria um usuario exclusivo por teste e remove ao final (escopo function).
+
+    Substitui o antigo 'session_user' (scope=session) que era nao-confiavel
+    contra a API publica ServeRest: IDs criados no setup podiam expirar antes
+    dos testes CT-002, CT-005 e CT-009 chegarem a usa-los.
+
+    Cada teste recebe um usuario novo, com ID garantidamente valido.
     """
     payload = build_user_payload(administrador="true")
-    response = api.post("/usuarios", payload, "SETUP")
+    response = api.post("/usuarios", payload, "ISOLATED_SETUP")
 
     assert response.status_code == 201, (
-        f"[SETUP FALHOU] Nao foi possivel criar usuario semente.\n"
+        f"[ISOLATED_SETUP FALHOU] Nao foi possivel criar usuario isolado.\n"
         f"Status: {response.status_code} | Body: {response.text}"
     )
 
     data = response.json()
     user = {"_id": data["_id"], **payload}
-    print(f"\n  [SETUP] Usuario semente criado: ID={user['_id']} | Email={user['email']}")
+    print(f"\n  [ISOLATED_SETUP] Usuario criado: ID={user['_id']} | Email={user['email']}")
 
     yield user
 
-    api.delete(f"/usuarios/{user['_id']}", "TEARDOWN")
-    print(f"\n  [TEARDOWN] Usuario semente {user['_id']} removido.")
+    api.delete(f"/usuarios/{user['_id']}", "ISOLATED_TEARDOWN")
+    print(f"\n  [ISOLATED_TEARDOWN] Usuario {user['_id']} removido.")
 
 
 @pytest.fixture

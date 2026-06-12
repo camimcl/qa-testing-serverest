@@ -44,11 +44,16 @@ class TestGetUsuarios:
         if body["usuarios"]:
             assert_has_fields(body["usuarios"][0], USER_FIELDS, "CT-001")
 
-    def test_ct002_get_user_by_valid_id(self, api, session_user):
-        """CT-002 -- Buscar usuario por ID existente (dinamico)."""
+    def test_ct002_get_user_by_valid_id(self, api, isolated_user):
+        """CT-002 -- Buscar usuario por ID existente (dinamico).
+
+        Usa isolated_user (escopo function) para garantir que o ID
+        esteja valido no momento da requisicao, sem risco de expiracao
+        por latencia da sessao na API publica ServeRest.
+        """
         print_test_header("CT-002", "Buscar usuario por ID existente")
 
-        uid = session_user["_id"]
+        uid = isolated_user["_id"]
         response = api.get(f"/usuarios/{uid}", "CT-002")
         body = assert_status(response, 200, "CT-002")
         assert_has_fields(body, USER_FIELDS, "CT-002")
@@ -84,12 +89,16 @@ class TestPostUsuarios:
         # Cleanup
         api.delete(f"/usuarios/{body['_id']}", "CT-004 CLEANUP")
 
-    def test_ct005_create_user_duplicate_email(self, api, session_user):
-        """CT-005 -- Cadastrar usuario com e-mail duplicado (do session_user)."""
+    def test_ct005_create_user_duplicate_email(self, api, isolated_user):
+        """CT-005 -- Cadastrar usuario com e-mail duplicado (do isolated_user).
+
+        Usa fixture isolada (escopo function) para garantir que o e-mail
+        referenciado nao foi modificado por nenhum outro teste da sessao.
+        """
         print_test_header("CT-005", "Cadastrar usuario com e-mail duplicado")
 
-        payload = build_user_payload(email=session_user["email"])
-        print(f"     !! E-mail duplicado: {session_user['email']}")
+        payload = build_user_payload(email=isolated_user["email"])
+        print(f"     !! E-mail duplicado: {isolated_user['email']}")
         response = api.post("/usuarios", payload, "CT-005")
         body = assert_status(response, 400, "CT-005")
         assert_message(body, "Este email já está sendo usado", "CT-005")
@@ -118,19 +127,21 @@ class TestPostUsuarios:
 class TestPutUsuarios:
     """CT-009 a CT-010: Atualizacao de usuarios."""
 
-    def test_ct009_update_existing_user(self, api, session_user):
-        """CT-009 -- Atualizar usuario existente com dados dinamicos."""
+    def test_ct009_update_existing_user(self, api, isolated_user):
+        """CT-009 -- Atualizar usuario existente com dados dinamicos.
+
+        Usa isolated_user (escopo function) para garantir que o ID do
+        usuario existe e e valido no momento do PUT, sem depender de
+        dados criados no inicio da sessao que podem ter expirado.
+        """
         print_test_header("CT-009", "Atualizar usuario existente")
 
-        uid = session_user["_id"]
+        uid = isolated_user["_id"]
         payload = build_user_payload(administrador="false")
         print(f"     >> ID: {uid} | Novo email: {payload['email']}")
         response = api.put(f"/usuarios/{uid}", payload, "CT-009")
         body = assert_status(response, 200, "CT-009")
         assert_message(body, "Registro alterado com sucesso", "CT-009")
-
-        # Sincroniza dados da fixture para testes seguintes
-        session_user.update(payload)
 
     def test_ct010_update_nonexistent_user_upsert(self, api):
         """CT-010 -- PUT com ID inexistente deve criar (upsert)."""
