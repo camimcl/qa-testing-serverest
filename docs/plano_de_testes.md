@@ -4,7 +4,6 @@
 > **Versão da API:** 3.2.0  
 > **Versão do plano:** 2.0  
 > **Data:** 2025-06-13  
-> **Autor:** QA Team — Trilha Compass
 
 ---
 
@@ -130,7 +129,7 @@ qa-serverest/
 
 ---
 
-### 4.2 Endpoint: `/login` — Autenticação 🔜
+### 4.2 Endpoint: `/login` — Autenticação ✅
 
 > **Arquivo:** `tests/test_login.py`  
 > **Auth requerida:** Nenhuma (o endpoint *gera* o token)  
@@ -138,11 +137,11 @@ qa-serverest/
 
 | ID     | Status | Cenário                                            | Status HTTP | Validação Esperada                                                                |
 |--------|--------|----------------------------------------------------|-------------|-----------------------------------------------------------------------------------|
-| CT-012 | 🔜     | Login com credenciais corretas (admin)              | 200         | `message` = "Login realizado com sucesso", campo `authorization` presente (Bearer) |
-| CT-013 | 🔜     | Login com senha errada                              | 401         | `message` = "Email e/ou senha inválidos"                                          |
-| CT-014 | 🔜     | Login com e-mail inexistente                        | 401         | `message` = "Email e/ou senha inválidos"                                          |
-| CT-015 | 🔜     | Login com campo "email" vazio/ausente               | 400         | Corpo da resposta indica que `email` é obrigatório                                |
-| CT-016 | 🔜     | Login com campo "password" vazio/ausente            | 400         | Corpo da resposta indica que `password` é obrigatório                             |
+| CT-012 | ✅     | Login com credenciais corretas (admin)              | 200         | `message` = "Login realizado com sucesso", campo `authorization` presente (Bearer) |
+| CT-013 | ✅     | Login com senha errada                              | 401         | `message` = "Email e/ou senha inválidos"                                          |
+| CT-014 | ✅     | Login com e-mail inexistente                        | 401         | `message` = "Email e/ou senha inválidos"                                          |
+| CT-015 | ✅     | Login com campo "email" vazio/ausente               | 400         | Corpo da resposta indica que `email` é obrigatório                                |
+| CT-016 | ✅     | Login com campo "password" vazio/ausente            | 400         | Corpo da resposta indica que `password` é obrigatório                             |
 
 #### Detalhamento dos cenários de Login
 
@@ -703,7 +702,7 @@ Um caso de teste é considerado **pronto para merge** quando atende a **todos** 
 | Faixa       | Endpoint     | Qtd. Cenários | Status       |
 |-------------|--------------|---------------|--------------|
 | CT-001–011  | `/usuarios`  | 11            | ✅ Implementado |
-| CT-012–016  | `/login`     | 5             | 🔜 A implementar |
+| CT-012–016  | `/login`     | 5             | ✅ Implementado |
 | CT-017–028  | `/produtos`  | 12            | 🔜 A implementar |
 | **Total**   |              | **28**        |              |
 

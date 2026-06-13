@@ -14,6 +14,9 @@ BASE_URL = "https://compassuol.serverest.dev"
 # Campos obrigatorios de um usuario na API
 USER_FIELDS = {"_id", "nome", "email", "password", "administrador"}
 
+# Campos esperados na resposta de login com sucesso
+LOGIN_SUCCESS_FIELDS = {"message", "authorization"}
+
 
 def generate_unique_email() -> str:
     """Gera e-mail unico via UUID4. Ex: user_a1b2c3d4e5f6@qatest.com"""
@@ -46,3 +49,23 @@ def build_user_payload(
         for field in exclude_fields:
             payload.pop(field, None)
     return payload
+
+
+def build_login_payload(
+    email: str = None,
+    password: str = "senha123",
+    exclude_fields: list = None
+) -> dict:
+    """
+    Factory para payloads de login.
+    Use exclude_fields para remover campos (testes de validacao).
+    """
+    payload = {
+        "email": email or generate_unique_email(),
+        "password": password
+    }
+    if exclude_fields:
+        for field in exclude_fields:
+            payload.pop(field, None)
+    return payload
+
